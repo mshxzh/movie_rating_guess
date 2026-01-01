@@ -19,12 +19,17 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.sh
 
 # Virtual environments
 venv/
 env/
 ENV/
+.venv/
 .venv
+
+# UV
+.python-version.bak
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -60,4 +65,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# MLflow
+mlruns/
+mlartifacts/
 
