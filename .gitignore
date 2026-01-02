@@ -44,9 +44,11 @@ ENV/
 
 # Data files (keep structure, ignore actual data)
 data/processed/*.parquet
+data/processed/*.csv
 data/features/*.pkl
 !data/processed/.gitkeep
 !data/features/.gitkeep
+*.db
 
 # Artifacts
 artifacts/*.pkl
