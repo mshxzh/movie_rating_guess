@@ -55,6 +55,10 @@ artifacts/*.pkl
 artifacts/*.json
 !artifacts/.gitkeep
 
+# Models
+models/*.pkl
+
+
 # Testing
 .pytest_cache/
 .coverage
