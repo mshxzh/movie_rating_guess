@@ -20,6 +20,7 @@ import argparse
 import pickle
 import sys
 from pathlib import Path
+from typing import List, Union
 
 import mlflow
 import mlflow.sklearn
@@ -30,6 +31,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.config import MLFLOW_TRACKING_URI, MODELS_DIR, PROCESSED_DIR
+from src.schemas import MovieInput, MovieBatchInput
 
 
 class MovieRatingPredictor:
@@ -147,16 +149,31 @@ class MovieRatingPredictor:
             print(f"  Warning: Could not load feature pipeline: {e}")
             print(f"  Make sure to provide pre-transformed data")
     
-    def predict_from_raw(self, raw_data):
+    def predict_from_raw(self, raw_data: Union[pd.DataFrame, MovieInput, List[MovieInput]]):
         """
         Make predictions from raw movie data (requires feature pipeline).
         
         Args:
-            raw_data: DataFrame with columns: release_date, title, overview, 
-                     original_language, genre
+            raw_data: Can be:
+                - DataFrame with columns: release_date, title, overview, original_language, genre
+                - Single MovieInput Pydantic model
+                - List of MovieInput Pydantic models
+        
+        Returns:
+            numpy array of predictions
         """
         if self.feature_pipeline is None:
             raise ValueError("Feature pipeline not loaded. Cannot transform raw data.")
+        
+        # Convert Pydantic models to DataFrame if necessary
+        if isinstance(raw_data, MovieInput):
+            raw_data = pd.DataFrame([raw_data.model_dump()])
+        elif isinstance(raw_data, list) and len(raw_data) > 0 and isinstance(raw_data[0], MovieInput):
+            raw_data = pd.DataFrame([movie.model_dump() for movie in raw_data])
+        elif not isinstance(raw_data, pd.DataFrame):
+            raise TypeError(
+                "raw_data must be a DataFrame, MovieInput, or List[MovieInput]"
+            )
         
         # Transform features
         X_transformed = self.feature_pipeline.transform(raw_data)
@@ -165,6 +182,32 @@ class MovieRatingPredictor:
         predictions = self.model.predict(X_transformed)
         
         return predictions
+    
+    def predict_single(self, movie: MovieInput) -> float:
+        """
+        Make prediction for a single movie using Pydantic model.
+        
+        Args:
+            movie: MovieInput Pydantic model
+        
+        Returns:
+            Predicted rating as a float
+        """
+        predictions = self.predict_from_raw(movie)
+        return float(predictions[0])
+    
+    def predict_batch_pydantic(self, movies: List[MovieInput]) -> List[float]:
+        """
+        Make predictions for multiple movies using Pydantic models.
+        
+        Args:
+            movies: List of MovieInput Pydantic models
+        
+        Returns:
+            List of predicted ratings
+        """
+        predictions = self.predict_from_raw(movies)
+        return [float(pred) for pred in predictions]
     
     def predict_from_transformed(self, X_transformed):
         """
