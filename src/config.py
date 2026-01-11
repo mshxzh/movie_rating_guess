@@ -16,24 +16,38 @@ RAW_DATA_PATH = DATA_DIR / "raw" / "movies.csv"
 PROCESSED_DIR = DATA_DIR / "processed"
 
 # MLflow configuration
-MLFLOW_TRACKING_URI = f"sqlite:///{NOTEBOOKS_DIR}/mlflow.db"
-MLFLOW_EXPERIMENT_NAME = "movie-rating-production"
+MLFLOW_TRACKING_URI = "http://ec2-34-253-187-162.eu-west-1.compute.amazonaws.com:5000" 
+MLFLOW_EXPERIMENT_NAME = "movie-rating-experiments"
 MLFLOW_REGISTRY_URI = MLFLOW_TRACKING_URI  # For model registry
 
 # Model configuration
 RANDOM_STATE = 42
 TEST_SIZE = 0.2
 
-# Feature engineering
-PIPELINE_VERSION = "v1"  # Options: "v1" (TF-IDF), "v2" (Sentence Transformers)
-LANGUAGE_THRESHOLD = 0.01
-OVERVIEW_MAX_FEATURES = 50
-TITLE_MAX_FEATURES = 30
+# Feature engineering constants
+COLUMNS_TO_KEEP = ['release_date', 'title', 'overview', 'original_language', 'genre']
+TARGET_COLUMN = 'vote_average'
+
+# Production pipeline configuration
+# The best model is saved as a combined pipeline (preprocessing + model)
+PRODUCTION_PIPELINE_NAME = "production_pipeline_v1"
+PRODUCTION_PIPELINE_PATH = MODELS_DIR / f"{PRODUCTION_PIPELINE_NAME}.joblib"
 
 # Best model configuration (from experiments)
+# Updated based on actual best performing model from experiments
 BEST_MODEL_CONFIG = {
+    "pipeline_version": "v4_trigrams",  # Best pipeline from experiments
+    "pipeline_name": "Trigrams + LightGBM",
     "model_name": "LightGBM",
-    "dataset_version": "v1",
+    # Preprocessing parameters (best performing from experiments)
+    "preprocessing": {
+        "overview_max_features": 50,
+        "title_max_features": 30,
+        "overview_ngram_range": (1, 3),  # Unigrams + Bigrams + Trigrams
+        "title_ngram_range": (1, 3),  # Unigrams + Bigrams + Trigrams
+        "language_threshold": 0.01
+    },
+    # Model hyperparameters
     "hyperparameters": {
         "n_estimators": 100,
         "max_depth": 6,
@@ -46,8 +60,4 @@ BEST_MODEL_CONFIG = {
         "verbose": -1
     }
 }
-
-# Columns to keep for feature engineering
-COLUMNS_TO_KEEP = ['release_date', 'title', 'overview', 'original_language', 'genre']
-TARGET_COLUMN = 'vote_average'
 

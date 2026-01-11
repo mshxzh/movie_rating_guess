@@ -166,16 +166,24 @@ class LanguageGrouper(BaseEstimator, TransformerMixin):
 
 
 class LightweightTextEmbedder(BaseEstimator, TransformerMixin):
-    """Lightweight text embeddings using TF-IDF"""
+    """Lightweight text embeddings using TF-IDF with configurable ngrams"""
     
-    def __init__(self, column, max_features=50, prefix=''):
+    def __init__(self, column, max_features=50, ngram_range=(1, 1), prefix=''):
+        """
+        Args:
+            column: Column name to embed
+            max_features: Maximum number of TF-IDF features to keep
+            ngram_range: Tuple (min_n, max_n) for n-gram range, e.g., (1, 1) for unigrams, (1, 2) for bigrams
+            prefix: Prefix for output feature names
+        """
         self.column = column
         self.max_features = max_features
+        self.ngram_range = ngram_range
         self.prefix = prefix or column
         self.vectorizer = TfidfVectorizer(
             max_features=max_features,
             stop_words='english',
-            ngram_range=(1, 2),
+            ngram_range=ngram_range,
             min_df=2,
             max_df=0.95
         )
