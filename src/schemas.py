@@ -106,16 +106,6 @@ class MovieInput(BaseModel):
     }
 
 
-class MovieBatchInput(BaseModel):
-    """Schema for batch prediction requests."""
-    movies: List[MovieInput] = Field(
-        ...,
-        min_length=1,
-        max_length=1000,
-        description="List of movies to predict ratings for"
-    )
-
-
 class PredictionOutput(BaseModel):
     """Schema for a single prediction result."""
     title: str
@@ -131,13 +121,6 @@ class PredictionOutput(BaseModel):
             ]
         }
     }
-
-
-class BatchPredictionOutput(BaseModel):
-    """Schema for batch prediction results."""
-    predictions: List[PredictionOutput]
-    count: int = Field(..., description="Number of predictions")
-    model_info: dict = Field(..., description="Information about the model used")
 
 
 class HealthResponse(BaseModel):

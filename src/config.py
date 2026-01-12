@@ -20,6 +20,10 @@ MLFLOW_TRACKING_URI = "http://ec2-34-253-187-162.eu-west-1.compute.amazonaws.com
 MLFLOW_EXPERIMENT_NAME = "movie-rating-experiments"
 MLFLOW_REGISTRY_URI = MLFLOW_TRACKING_URI  # For model registry
 
+# Model Registry configuration
+MLFLOW_MODEL_NAME = "movie_review_rating_trigrams_lightgbm"  # Registered model name
+MLFLOW_MODEL_STAGE = "None"  # Stage: None, "Staging", "Production", or "Archived"
+
 # Model configuration
 RANDOM_STATE = 42
 TEST_SIZE = 0.2
