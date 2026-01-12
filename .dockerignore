@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+.cursor/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+
+# Testing
+test_*.py
+tests/
+.pytest_cache/
+
+# Data (exclude large data files)
+data/raw/
+notebooks/
+*.csv
+*.parquet
+
+# MLflow runs (too large)
+mlruns/
+notebooks/mlflow.db
+notebooks/mlruns/
+
+# Lock files (we only need uv.lock which is explicitly copied)
+requirements.lock
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Example files
+example_*.json
+
+
